@@ -3,7 +3,7 @@
 
 ## 1, Environment prep, create an environment called "dlTorch"
 
-Install Anaconda on your PC.  Use terminal to navigate to project folder
+Install Anaconda on your PC. [[https://www.anaconda.com/distribution/#download-section]] Use terminal to navigate to project folder
 ```
 conda create --name dlTorch --file DL_workshop.txt 
 ```
