@@ -5,7 +5,7 @@
 
 Install Anaconda on your PC.  Use terminal to navigate to project folder
 ```
-  conda create --name dlTorch --file DL_workshop.txt 
+conda create --name dlTorch --file DL_workshop.txt 
 ```
   
 ## 2, Activate the environment we just created
