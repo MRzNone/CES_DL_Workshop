@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torchvision.transforms as transforms
+# import torchvision.transforms as transforms
 import torchvision.datasets as dsets
 from torch.autograd import Variable
 import glob, os
@@ -16,17 +16,22 @@ data = []
 '''
   Step 1: Load Data
 '''
-# read data sets
 print("loading data sets")
+
+# cd to corresponding folder
 os.chdir("./shapes")
 # os.chdir("./small")
 
+# a label for each shape
 label = 0
 for path in glob.glob("*"):
-    # Folders
+    # loop through folders
     for file in glob.glob(path + "/**"):
+      # open image
       img = Image.open(file)
+      # shrink image down to shrink_size, since original image too big
       img.thumbnail(shrink_size)
+      # convert to grey scale, meaning black and white
       img = img.convert("L")
       
       data.append({
@@ -47,13 +52,19 @@ for path in glob.glob("*"):
 random.Random(10).shuffle(data) # with seed to ensure consistency
 
 num_test = 3000
+# get some sample as test, aka target
 test_data = data[0:num_test]
 train_data  = data[num_test:-1]
 
+# batch size is how many sample to go through each "step"
 batch_size = 100
+# how many batch size to go through totally
 n_iters = 4000
+# times going through the whole data
 num_epochs = int(n_iters * batch_size / (len(train_data)))
 
+
+# make data iterable
 train_loader = torch.utils.data.DataLoader(dataset=train_data, 
                                            batch_size=batch_size, 
                                            shuffle=True)
@@ -92,8 +103,8 @@ class Brain(nn.Module):
     out = self.relu2(out)
     out = self.maxpool2(out)
 
-    # 1 fc layer
-    self.fc1 = nn.Linear(out.view(-1, 1).size()[0], 4)
+    # 1 linear fc layer
+    self.fc1 = nn.Linear(out.view(-1, 1).size(0), 4) # 4 kinds of output
 
 
   def forward(self, input):
@@ -144,24 +155,29 @@ for epoch in range(num_epochs):
   print("-------Epoch {}/{}-------".format(epoch + 1, num_epochs))
   for i, batch in enumerate(train_loader):
     iter += 1
-    # print(iter)
     labels = batch['label']
     images = batch['img']
 
+    # was tensor, wrap in Variable, so we can accumulate gradients
     images = Variable(torch.unsqueeze(images,1))
     labels = Variable(labels)
 
     # clear cumulated gradients
     optimizer.zero_grad()
 
+    # get the predictions of our model
     output = model(images)
 
+    # calculate loss
     loss = criteria(output, labels)
+    # gradient descent
     loss.backward()
 
+    # update weights according to gradients 
     optimizer.step()
 
-    if iter % 20 == 0:
+    # report accuracy
+    if iter % 50 == 0:
       correct = 0
       total = 0
 
@@ -178,6 +194,7 @@ for epoch in range(num_epochs):
 
         total += t_labels.size(0)
 
+        # num of correct shapes predicted
         correct += (precicted == t_labels).sum().item()
 
       accuracy = correct / total
