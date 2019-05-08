@@ -43,15 +43,16 @@ for path in glob.glob("*"):
 
 # separate train data and test data
 
-random.shuffle(data)
+# random.shuffle(data) # with no seed
+random.Random(10).shuffle(data) # with seed to ensure consistency
 
 num_test = 3000
 test_data = data[0:num_test]
 train_data  = data[num_test:-1]
 
 batch_size = 100
-num_epochs = 20
-n_iters = int(num_epochs * len(data) / batch_size)
+n_iters = 4000
+num_epochs = int(n_iters * batch_size / (len(train_data)))
 
 train_loader = torch.utils.data.DataLoader(dataset=train_data, 
                                            batch_size=batch_size, 
@@ -140,7 +141,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
 
 iter = 0
 for epoch in range(num_epochs):
-  print("-------Epoch {}-------".format(epoch))
+  print("-------Epoch {}/{}-------".format(epoch + 1, num_epochs))
   for i, batch in enumerate(train_loader):
     iter += 1
     # print(iter)
