@@ -8,7 +8,7 @@ Use terminal to navigate to project folder
 Type
   conda create --name dlTorch --file DL_workshop.txt 
   
-2, Activate the environment we just creaetd
+2, Activate the environment we just created
 
 conda activate dlTorch
 
